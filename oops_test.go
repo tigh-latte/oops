@@ -652,7 +652,7 @@ Request:
   * User-Agent: Go-http-client/1.1
   * Content-Length: 11
   * Accept-Encoding: gzip
-  * 
+  *
   * hello world
 `
 	got := fmt.Sprintf("%+v", withoutStacktrace(err.(OopsError)))
@@ -974,27 +974,31 @@ func TestOopsMainFunctions(t *testing.T) { //nolint:paralleltest
 	is.Error(err)
 	is.Equal("test error", err.(OopsError).err.Error())
 	// Test Assert function
-	defer func() {
-		if r := recover(); r != nil {
-			err, ok := r.(OopsError)
-			is.True(ok)
-			is.Equal("assertion failed", err.Error())
-		} else {
-			t.Fatal("Expected panic for failed assertion")
-		}
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				err, ok := r.(OopsError)
+				is.True(ok)
+				is.Equal("assertion failed", err.Error())
+			} else {
+				t.Fatal("Expected panic for failed assertion")
+			}
+		}()
+		Assert(false)
 	}()
-	Assert(false)
 	// Test Assertf function
-	defer func() {
-		if r := recover(); r != nil {
-			err, ok := r.(OopsError)
-			is.True(ok)
-			is.Equal("test assertion", err.Error())
-		} else {
-			t.Fatal("Expected panic for failed assertion")
-		}
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				err, ok := r.(OopsError)
+				is.True(ok)
+				is.Equal("test assertion", err.Error())
+			} else {
+				t.Fatal("Expected panic for failed assertion")
+			}
+		}()
+		Assertf(false, "test assertion")
 	}()
-	Assertf(false, "test assertion")
 	// Test Code function
 	err2 := Code("test_code").Wrap(assert.AnError)
 	is.Error(err2)

@@ -505,6 +505,27 @@ func (o OopsErrorBuilder) Owner(owner string) OopsErrorBuilder {
 	return o2
 }
 
+func (o OopsErrorBuilder) addData(target map[string]any, data ...any) {
+	if len(data) == 1 {
+		m, ok := data[0].(map[string]any)
+		if ok {
+			for k, v := range m {
+				target[k] = v
+			}
+		}
+	} else {
+		// Process user data key-value pairs
+		for i := 0; i < len(data); i += 2 {
+			if i+1 < len(data) {
+				key, ok := data[i].(string)
+				if ok {
+					target[key] = data[i+1]
+				}
+			}
+		}
+	}
+}
+
 // User adds user information to the error context.
 // This method accepts a user ID followed by key-value pairs for user data.
 //
@@ -515,16 +536,7 @@ func (o OopsErrorBuilder) User(userID string, userData ...any) OopsErrorBuilder 
 	o2 := o.copy()
 	o2.userID = userID
 
-	// Process user data key-value pairs
-	for i := 0; i < len(userData); i += 2 {
-		if i+1 < len(userData) {
-			key, ok := userData[i].(string)
-			if ok {
-				o2.userData[key] = userData[i+1]
-			}
-		}
-	}
-
+	o2.addData(o2.userData, userData...)
 	return o2
 }
 
@@ -538,16 +550,7 @@ func (o OopsErrorBuilder) Tenant(tenantID string, tenantData ...any) OopsErrorBu
 	o2 := o.copy()
 	o2.tenantID = tenantID
 
-	// Process tenant data key-value pairs
-	for i := 0; i < len(tenantData); i += 2 {
-		if i+1 < len(tenantData) {
-			key, ok := tenantData[i].(string)
-			if ok {
-				o2.tenantData[key] = tenantData[i+1]
-			}
-		}
-	}
-
+	o2.addData(o2.tenantData, tenantData...)
 	return o2
 }
 
