@@ -974,27 +974,33 @@ func TestOopsMainFunctions(t *testing.T) { //nolint:paralleltest
 	is.Error(err)
 	is.Equal("test error", err.(OopsError).err.Error())
 	// Test Assert function
-	defer func() {
-		if r := recover(); r != nil {
-			err, ok := r.(OopsError)
-			is.True(ok)
-			is.Equal("assertion failed", err.Error())
-		} else {
-			t.Fatal("Expected panic for failed assertion")
-		}
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				err, ok := r.(OopsError)
+				is.True(ok)
+				is.Equal("assertion failed", err.Error())
+			} else {
+				t.Fatal("Expected panic for failed assertion")
+			}
+		}()
+
+		Assert(false)
 	}()
-	Assert(false)
 	// Test Assertf function
-	defer func() {
-		if r := recover(); r != nil {
-			err, ok := r.(OopsError)
-			is.True(ok)
-			is.Equal("test assertion", err.Error())
-		} else {
-			t.Fatal("Expected panic for failed assertion")
-		}
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				err, ok := r.(OopsError)
+				is.True(ok)
+				is.Equal("test assertion", err.Error())
+			} else {
+				t.Fatal("Expected panic for failed assertion")
+			}
+		}()
+
+		Assertf(false, "test assertion")
 	}()
-	Assertf(false, "test assertion")
 	// Test Code function
 	err2 := Code("test_code").Wrap(assert.AnError)
 	is.Error(err2)
@@ -1050,14 +1056,14 @@ func TestOopsMainFunctions(t *testing.T) { //nolint:paralleltest
 	is.Equal("test owner", err13.(OopsError).Owner())
 	// Test User function
 	userData := map[string]any{"name": "test"}
-	err14 := User("user123", userData).Wrap(assert.AnError)
+	err14 := User("user123", "name", "test").Wrap(assert.AnError)
 	is.Error(err14)
 	userID, userDataResult := err14.(OopsError).User()
 	is.Equal("user123", userID)
 	is.Equal(userData, userDataResult)
 	// Test Tenant function
 	tenantData := map[string]any{"org": "test"}
-	err15 := Tenant("tenant123", tenantData).Wrap(assert.AnError)
+	err15 := Tenant("tenant123", "org", "test").Wrap(assert.AnError)
 	is.Error(err15)
 	tenantID, tenantDataResult := err15.(OopsError).Tenant()
 	is.Equal("tenant123", tenantID)

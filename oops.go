@@ -140,13 +140,13 @@ func Owner(owner string) OopsErrorBuilder {
 }
 
 // User supplies user id and a chain of key/value.
-func User(userID string, data map[string]any) OopsErrorBuilder {
-	return newBuilder().User(userID, data)
+func User(userID string, data ...any) OopsErrorBuilder {
+	return newBuilder().User(userID, data...)
 }
 
 // Tenant supplies tenant id and a chain of key/value.
-func Tenant(tenantID string, data map[string]any) OopsErrorBuilder {
-	return newBuilder().Tenant(tenantID, data)
+func Tenant(tenantID string, data ...any) OopsErrorBuilder {
+	return newBuilder().Tenant(tenantID, data...)
 }
 
 // Request supplies a http.Request.
