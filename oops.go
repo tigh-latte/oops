@@ -139,14 +139,22 @@ func Owner(owner string) OopsErrorBuilder {
 	return newBuilder().Owner(owner)
 }
 
+func stub[Map ~map[K]V, K comparable, V any](m Map) []any {
+	vv := make([]any, 0, len(m)*2)
+	for k, v := range m {
+		vv = append(vv, k, v)
+	}
+	return vv
+}
+
 // User supplies user id and a chain of key/value.
 func User(userID string, data map[string]any) OopsErrorBuilder {
-	return newBuilder().User(userID, data)
+	return newBuilder().User(userID, stub(data)...)
 }
 
 // Tenant supplies tenant id and a chain of key/value.
 func Tenant(tenantID string, data map[string]any) OopsErrorBuilder {
-	return newBuilder().Tenant(tenantID, data)
+	return newBuilder().Tenant(tenantID, stub(data)...)
 }
 
 // Request supplies a http.Request.
